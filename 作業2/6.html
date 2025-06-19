@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   我可是孤狼啊 - 崩壞：星穹鐵道 Wiki
+  </title>
+  <style>
+   * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 30%, #2a3441 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            padding: 15px 20px;
+            font-size: 14px;
+            color: #8a9ba8;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .breadcrumb a {
+            color: #8a9ba8;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #ffffff;
+        }
+
+        .hero-section {
+            position: relative;
+            height: 500px;
+            background: linear-gradient(135deg, #0f1419 0%, #1e2832 50%, #2a3441 100%);
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 70%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:%2300ff88;stop-opacity:0.3" /><stop offset="100%" style="stop-color:%2300aa55;stop-opacity:0.1" /></radialGradient></defs><rect width="800" height="500" fill="url(%23grad1)"/><path d="M200,100 Q400,50 600,150 T800,200 L800,500 L0,500 Z" fill="url(%23grad1)" opacity="0.5"/></svg>') no-repeat center;
+            background-size: cover;
+        }
+
+        .character-artwork {
+            position: absolute;
+            left: 50px;
+            top: 30px;
+            width: 400px;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,255,136,0.3);
+        }
+
+        .character-artwork img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .character-info {
+            position: relative;
+            z-index: 10;
+            padding: 60px 40px;
+            max-width: 600px;
+            margin-left: 500px;
+        }
+
+        .character-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .character-title {
+            color: #8a9ba8;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .content-section {
+            background: rgba(10,14,26,0.8);
+            backdrop-filter: blur(10px);
+            margin: 0 20px;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            z-index: 5;
+            margin-top: -50px;
+        }
+
+        .section-header {
+            padding: 30px 40px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 0;
+            padding: 0 40px 40px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .info-label {
+            color: #8a9ba8;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ascension-section {
+            background: rgba(15,20,35,0.9);
+            backdrop-filter: blur(10px);
+            margin: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .level-tabs {
+            display: flex;
+            background: rgba(5,8,15,0.8);
+            padding: 0;
+        }
+
+        .level-tab {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.05);
+            border: none;
+            color: #8a9ba8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .level-tab.active {
+            background: rgba(255,255,255,0.15);
+            color: #ffffff;
+            position: relative;
+        }
+
+        .level-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #00ff88;
+        }
+
+        .level-tab:hover:not(.active) {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+        }
+
+        .ascension-content {
+            padding: 30px 40px;
+        }
+
+        .stats-materials-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .stats-table {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .stats-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .stats-table th {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .stats-table td {
+            padding: 12px 15px;
+            color: #c0c8d0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 14px;
+        }
+
+        .stats-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .materials-section h4 {
+            color: #ffffff;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .material-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.03);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .material-item:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .material-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            position: relative;
+        }
+
+        .material-icon.rarity-5 {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+        }
+
+        .material-icon.rarity-4 {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .material-rarity {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: rgba(0,0,0,0.7);
+            color: #ffd700;
+            font-size: 8px;
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+
+        .material-info {
+            flex: 1;
+        }
+
+        .material-name {
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .material-count {
+            color: #8a9ba8;
+            font-size: 12px;
+        }
+
+        .gallery-container {
+            padding: 0 40px 40px;
+        }
+
+        .gallery-tabs {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            padding: 40px 0;
+        }
+
+        .gallery-item {
+            width: 300px;
+            height: 250px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .gallery-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                height: auto;
+                padding: 20px;
+            }
+            
+            .character-artwork {
+                position: static;
+                left: auto;
+                top: auto;
+                width: 100%;
+                height: 250px;
+                margin: 20px 0;
+            }
+            
+            .character-info {
+                padding: 20px;
+                max-width: none;
+                margin-left: 0;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                padding: 0 20px 20px;
+            }
+            
+            .content-section {
+                margin: 0 10px;
+                margin-top: -30px;
+            }
+
+            .ascension-section {
+                margin: 10px;
+            }
+
+            .level-tabs {
+                flex-wrap: wrap;
+            }
+
+            .level-tab {
+                min-width: 70px;
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+
+            .ascension-content {
+                padding: 20px;
+            }
+
+            .stats-materials-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .gallery-container {
+                padding: 0 20px 20px;
+            }
+            
+            .gallery-grid {
+                gap: 20px;
+            }
+
+            .gallery-item {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <div class="breadcrumb">
+    <a href="2.html">
+     首頁
+    </a>
+    /
+    <a href="4.html">
+     光錐
+    </a>
+    / 我可是孤狼啊
+   </div>
+   <div class="hero-section">
+    <div class="character-artwork">
+     <img alt="我可是孤狼啊" src="12 (1).png"/>
+    </div>
+    <div class="character-info">
+       <div class="character-name">
+        我可是孤狼啊
+       </div>
+       <div class="character-title">
+        <img alt="虛無" height="30" src="虛無.PNG" width="30"/>
+       </div>      
+       <div class="meta-item">
+       <div class="stars">
+        ★★★★★
+       </div>
+      </div>
+     <div class="nav-buttons">
+      <a class="nav-btn active" href="#">
+       故事
+      </a>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="content-section">
+   <div class="section-header">
+    <div class="section-title">
+     基本資訊
+    </div>
+   </div>
+   <div class="info-grid">
+    <div>
+     <div class="info-row">
+      <div class="info-label">
+       名稱
+      </div>
+      <div class="info-value">
+       我可是孤狼啊
+      </div>
+     </div>
+     <div class="info-row">
+      <div class="info-label">
+       熔炼
+      </div>
+      <div class="info-value">
+       每當我方任意角色成功對敵人施加負面效果時，裝備者獲得1層【孤狼意志】，每層持續2回合，最多可疊5層。<br>
+
+        裝備者每層【孤狼意志】提供：<br>
+
+        使裝備者的賭注成功率提高20%/22.5%/25%/27.5%/30%。<br>
+
+        當裝備者對處於信用破產狀態下的敵人使用戰技或終結技時，會將信用破產擴散至鄰近一名敵人，並使該敵人受到的效果命中降低15%/18%/21%/24%/30%，持續1回合；同時使該敵人行動延遲10%/11%/12%/13%/15%，持續2回合。<br>
+
+        當裝備者對有【信用破產】的敵人施放戰技或終結技時，額外將「信用破產」擴散至鄰近一名敵人（優先未命中目標，每名敵人每回合最多被擴散一次）。
+      </div>
+     </div>
+    </div>
+    <div>
+     <div class="info-row">
+      <div class="info-label">
+       命途
+      </div>
+      <div class="info-value">
+       虛無
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="ascension-section">
+   <div class="section-header">
+    <div class="section-title">
+     晉階
+    </div>
+   </div>
+   <div class="level-tabs">
+    <button class="level-tab" data-level="1">
+     ⚡ Lv. 1
+    </button>
+    <button class="level-tab active" data-level="20">
+     ⚡ Lv. 20
+    </button>
+    <button class="level-tab" data-level="30">
+     ⚡ Lv. 30
+    </button>
+    <button class="level-tab" data-level="40">
+     ⚡ Lv. 40
+    </button>
+    <button class="level-tab" data-level="50">
+     ⚡ Lv. 50
+    </button>
+    <button class="level-tab" data-level="60">
+     ⚡ Lv. 60
+    </button>
+    <button class="level-tab" data-level="70">
+     ⚡ Lv. 70
+    </button>
+    <button class="level-tab" data-level="80">
+     ⚡ Lv. 80
+    </button>
+   </div>
+   <div class="ascension-content">
+    <div class="stats-materials-grid">
+     <div class="stats-section">
+      <div class="stats-table">
+       <table>
+        <thead>
+         <tr>
+          <th>
+           屬性
+          </th>
+          <th>
+           突破前
+          </th>
+          <th>
+           突破後
+          </th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td>
+           基礎生命值
+          </td>
+          <td>
+           257
+          </td>
+          <td>
+           310
+          </td>
+         </tr>
+         <tr>
+          <td>
+           基礎攻擊力
+          </td>
+          <td>
+           200
+          </td>
+          <td>
+           241
+          </td>
+         </tr>
+         <tr>
+          <td>
+           基礎防禦力
+          </td>
+          <td>
+           148
+          </td>
+          <td>
+           178
+          </td>
+         </tr>
+         <tr>
+          <td>
+           基礎速度
+          </td>
+          <td>
+           97
+          </td>
+          <td>
+           97
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+     <div class="materials-section">
+      <h4>
+       突破素材
+      </h4>
+      <div class="material-item">
+       <div class="material-icon rarity-5">
+        <div class="material-rarity">
+         5
+        </div>
+        兆光
+       </div>
+       <div class="material-info">
+        <div class="material-name">
+         虛構銘記
+        </div>
+        <div class="material-count">
+         5
+        </div>
+       </div>
+      </div>
+      <div class="material-item">
+       <div class="material-icon rarity-4">
+        <div class="material-rarity">
+         4
+        </div>
+        信用
+       </div>
+       <div class="material-info">
+        <div class="material-name">
+         信用點
+        </div>
+        <div class="material-count">
+         4,000
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="ascension-section">
+    <div class="section-header">
+    <div class="section-title">
+        畫廊
+    </div>
+     </div>
+     <div class="gallery-container">
+      <div class="gallery-content">
+       <div class="gallery-grid">
+        <div class="gallery-item" data-tab="standing">
+         <img alt="立繪1" src="s1.png"/>
+        </div>
+       </div>
+      </div>
+     </div>
+  </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+const ascensionData = {
+    1:  { unlocked: true,  hp: 400, atk: 220, def: 190, spd: 100 },
+    20: { unlocked: false, hp: 400, atk: 220, def: 190, spd: 100 },
+    21: { unlocked: true,  hp: 560, atk: 320, def: 270, spd: 100 },
+    30: { unlocked: false, hp: 560, atk: 320, def: 270, spd: 100 },
+    31: { unlocked: true,  hp: 660, atk: 370, def: 310, spd: 100 },
+    40: { unlocked: false, hp: 660, atk: 370, def: 310, spd: 100 },
+    41: { unlocked: true,  hp: 760, atk: 420, def: 350, spd: 100 },
+    50: { unlocked: false, hp: 760, atk: 420, def: 350, spd: 100 },
+    51: { unlocked: true,  hp: 850, atk: 470, def: 390, spd: 100 },
+    60: { unlocked: false, hp: 850, atk: 470, def: 390, spd: 100 },
+    61: { unlocked: true,  hp: 910, atk: 500, def: 410, spd: 100 },
+    70: { unlocked: false, hp: 910, atk: 500, def: 410, spd: 100 },
+    71: { unlocked: true,  hp: 930, atk: 515, def: 430, spd: 100 },
+    80: { unlocked: false, hp: 930, atk: 515, def: 430, spd: 100 },
+    81: { unlocked: true,  hp: 952, atk: 529, def: 463, spd: 100 },
+};
+
+        document.querySelectorAll('.level-tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                const level = parseInt(this.dataset.level);
+                const ascData = ascensionData[level + 1] && ascensionData[level + 1].unlocked
+                    ? ascensionData[level + 1] : ascensionData[level];
+
+                if (!ascData) return;
+                const rows = document.querySelectorAll('.stats-table tbody tr');
+                rows[0].children[1].textContent = ascensionData[level]?.hp || '-';
+                rows[0].children[2].textContent = (level === 1) ? '-' : ascData.hp;
+
+                rows[1].children[1].textContent = ascensionData[level]?.atk || '-';
+                rows[1].children[2].textContent = (level === 1) ? '-' : ascData.atk;
+
+                rows[2].children[1].textContent = ascensionData[level]?.def || '-';
+                rows[2].children[2].textContent = (level === 1) ? '-' : ascData.def;
+
+                rows[3].children[1].textContent = ascensionData[level]?.spd || '-';
+                rows[3].children[2].textContent = (level === 1) ? '-' : ascData.spd;
+
+                const mat = document.querySelector('.materials-section');
+                const materialMap = {
+                    20: [
+                        { name: '虛構銘記', count: '×5', rarity: 5 },
+                        { name: '信用點', count: '×4000', rarity: 4 }
+                    ],
+                    30: [
+                        { name: '宿命金幣', count: '×5', rarity: 5 },
+                        { name: '信用點', count: '×8000', rarity: 4 }
+                    ],
+                    40: [
+                        { name: '戒律結晶', count: '×5', rarity: 5 },
+                        { name: '信用點', count: '×16000', rarity: 4 }
+                    ],
+                    50: [
+                        { name: '虛構銘記', count: '×8', rarity: 5 },
+                        { name: '信用點', count: '×32000', rarity: 4 }
+                    ],
+                    60: [
+                        { name: '宿命金幣', count: '×8', rarity: 5 },
+                        { name: '信用點', count: '×64000', rarity: 4 }
+                    ],
+                    70: [
+                        { name: '戒律結晶', count: '×8', rarity: 5 },
+                        { name: '信用點', count: '×128000', rarity: 4 }
+                    ]
+                };
+
+                if (level === 1 || level === 80) {
+                    mat.innerHTML = `<h4>突破素材</h4><p style="color:#8a9ba8;">無需突破素材</p>`;
+                } else {
+                    const materials = materialMap[level];
+                    mat.innerHTML = `<h4>突破素材</h4>` + materials.map(material => `
+                        <div class="material-item">
+                            <div class="material-icon rarity-${material.rarity}">
+                                <div class="material-rarity">${material.rarity}</div>
+                                ${material.rarity === 5 ? '兆光' : '信用'}
+                            </div>
+                            <div class="material-info">
+                                <div class="material-name">${material.name}</div>
+                                <div class="material-count">${material.count}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            });
+        });
+    });
+    </script>
+ </body>
+</html>

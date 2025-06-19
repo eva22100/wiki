@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>裝備圖鑑</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: url('3.12.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding-top: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .sidebar .menu {
+      list-style: none;
+      padding: 0 20px;
+      margin: 0;
+    }
+
+    .sidebar .menu li {
+      padding: 12px 0;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
+    }
+
+    .sidebar .menu li:hover {
+      color: gold;
+    }
+
+    .page-container {
+      margin-left: 200px;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .filter-section {
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+    }
+
+    .filter-title {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .video-button {
+      width: 60px;
+      height: 60px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .video-button video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .video-button.active {
+      border-color: gold;
+    }
+
+    .rarity-boxes button {
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .rarity-boxes button.active {
+      border-color: gold;
+      color: gold;
+    }
+
+    .select-group {
+      padding: 4px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border-radius: 4px;
+      appearance: none;
+      margin-bottom: 10px;
+    }
+
+    .level-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .level-box button {
+      padding: 6px 12px;
+      border: 1px solid white;
+      background: transparent;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .level-box button.active {
+      border-color: gold;
+    }
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .character-card {
+      background: rgba(0,0,0,0.75);
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid #555;
+      transition: transform 0.2s;
+      text-decoration: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .character-card:hover {
+      transform: translateY(-4px);
+      border-color: gold;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    }
+
+    .char-info {
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .stat-line {
+      margin-top: 2px;
+    }
+
+    .stats {
+      font-size: 14px;
+    }
+
+    .icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 左側目錄欄 -->
+  <div class="sidebar">
+    <ul class="menu">
+      <h1><b>目錄</b></h1>
+      <a href="2.html" style="color: white; text-decoration: none;"><li><img src="世界.png" class="icon">主畫面</li></a>
+      <a href="3.html" style="color: white; text-decoration: none;"><li><img src="人物.png" class="icon">人物圖鑑</li></a>
+      <a href="4.html" style="color: white; text-decoration: none;"><li><img src="光錐.png" class="icon">裝備圖鑑</li></a>
+      <a href="2.3.html" style="color: white; text-decoration: none;"><li><img src="物品.png" class="icon">製作素材</li></a>
+      <a href="2.4.html" style="color: white; text-decoration: none;"><li><img src="敵人.png" class="icon">製作工具</li></a>
+    </ul>
+  </div>
+
+  <!-- 主內容 -->
+  <div class="page-container">
+    <div class="filter-section">
+
+      <div class="filter-title">命途</div>
+      <div class="filter-group" id="paths">
+        <button type="button" data-value="0" class="video-button"><video src="毀滅.mov" muted preload="auto"></video></button>
+        <button type="button" data-value="1" class="video-button"><video src="巡獵.mov" muted preload="auto"></video></button>
+        <button type="button" data-value="2" class="video-button"><video src="智識.mov" muted preload="auto"></video></button>
+        <button type="button" data-value="3" class="video-button"><video src="同協.mov" muted preload="auto"></video></button>
+        <button type="button" data-value="4" class="video-button"><video src="虛無.mov" muted preload="auto"></video></button>
+        <button type="button" data-value="5" class="video-button"><video src="存護.mov" muted preload="auto"></video></button>
+        <button type="button" data-value="6" class="video-button"><video src="豐饒.mov" muted preload="auto"></video></button>
+      </div>
+
+      <div class="filter-title">稀有度</div>
+      <div class="filter-group rarity-boxes" id="rarity">
+        <button type="button" data-value="3">★★★</button>
+        <button type="button" data-value="4">★★★★</button>
+        <button type="button" data-value="5">★★★★★</button>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <select id="faction-filter" style="background-color: #2a2a2a; color: white; border: 1px solid #444; padding: 8px 12px; border-radius: 4px; font-size: 14px; min-width: 120px;">
+          <option value="">技能類型</option>
+          <option value="A">我懶得分</option>
+        </select>
+        
+        <select id="element-filter" style="background-color: #2a2a2a; color: white; border: 1px solid #444; padding: 8px 12px; border-radius: 4px; font-size: 14px; min-width: 120px;">
+          <option value="">取得途徑</option>
+          <option value="dream">夢裡</option>
+        </select>
+      </div>
+
+      <div class="filter-title">等級</div>
+      <div class="level-box" id="level-box">
+        <button type="button" class="active" data-lv="1">Lv1</button>
+        <button type="button" data-lv="80">Lv80</button>
+      </div>
+
+    </div>
+
+    <div class="character-grid" id="character-grid">
+      <!-- 動態角色卡片 -->
+    </div>
+  </div>
+
+  <script>
+    // 修正後的角色數據結構，包含不同等級的數值
+    const characters = [
+      {
+        name: "阿哈.問候",
+        type: "歡愉",
+        path: "",
+        rarity: "5",
+        faction: "A",
+        element: "dream",
+        img: "阿哈3.jpg",
+        stats: {
+          1: { hp: "????", def: "????", atk: "????" },
+          80: { hp: "????", def: "????", atk: "????" }
+        },
+        description: "樂子<br>阿基维利——阿基维利！好久不见，甚是想念！",
+        link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      },
+      {
+        name: "我可是孤狼啊",
+        type: "虛無",  
+        path: "4",
+        rarity: "5",
+        faction: "A",
+        element: "dream",
+        img: "12 (1).png",
+        stats: {
+          1: { hp: "400", def: "220", atk: "190" },
+          80: { hp: "952", def: "463", atk: "529" }
+        },
+        description: "卑鄙<br>每當我方任意角色成功對敵人施加負面效果時，獲得1層...",
+        link: "6.html"
+      }
+    ];
+
+    const grid = document.getElementById('character-grid');
+    const levelState = { lv: '1' };
+
+    // 修正後的渲染函數
+    function renderCharacters() {
+      grid.innerHTML = '';
+      characters.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'character-card';
+        
+        // 添加必要的 data 屬性用於篩選
+        card.dataset.path = c.path;
+        card.dataset.rarity = c.rarity;
+        card.dataset.faction = c.faction;
+        card.dataset.element = c.element;
+
+        // 添加點擊事件處理器
+        card.addEventListener('click', function() {
+          window.location.href = c.link;
+        });
+
+        // 圖片
+        const img = document.createElement('img');
+        img.src = c.img;
+        img.style.width = '80px';
+        img.style.height = '80px';
+        img.style.borderRadius = '4px';
+        img.style.flexShrink = '0';
+        img.style.objectFit = 'cover';
+
+        // 卡片右側資訊區
+        const info = document.createElement('div');
+        info.className = 'char-info';
+
+        // 獲取當前等級的數值
+        const currentStats = c.stats[levelState.lv];
+
+        // 名稱與類型
+        const name = document.createElement('div');
+        name.innerHTML = `<b style="color:#fcd34d">${c.name}</b>`;
+        const type = document.createElement('div');
+        type.textContent = c.type;
+        type.style.fontSize = '12px';
+        type.style.color = '#ccc';
+
+        // 星級
+        const stars = document.createElement('div');
+        stars.innerHTML = '★'.repeat(parseInt(c.rarity));
+        stars.style.color = '#ffd700';
+        stars.style.margin = '4px 0';
+
+        // 數值列（使用當前等級的數值）
+        const stats = document.createElement('div');
+        stats.className = 'stats';
+        stats.innerHTML = `
+          <div class="stat-line">♡ ${currentStats.hp}　🛡 ${currentStats.def}　⚔ ${currentStats.atk}</div>
+        `;
+
+        // 描述
+        const desc = document.createElement('div');
+        desc.className = 'stat-line';
+        desc.innerHTML = c.description;
+        desc.style.marginTop = '6px';
+        desc.style.fontSize = '12px';
+        desc.style.color = '#bbb';
+
+        // 加入到 info
+        info.appendChild(name);
+        info.appendChild(type);
+        info.appendChild(stars);
+        info.appendChild(stats);
+        info.appendChild(desc);
+
+        card.appendChild(img);
+        card.appendChild(info);
+        grid.appendChild(card);
+      });
+    }
+
+    function setupToggle(selector, single = false) {
+      document.querySelector(selector).addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        
+        // 防止篩選按鈕觸發卡片點擊
+        e.stopPropagation();
+        
+        if (single) {
+          document.querySelectorAll(selector + ' button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        } else {
+          btn.classList.toggle('active');
+        }
+        applyFilters();
+      });
+    }
+
+    setupToggle('#paths');
+    setupToggle('#rarity');
+    setupToggle('#level-box', true);
+
+    // 為兩個下拉選單都添加事件監聽器
+    document.getElementById('faction-filter').addEventListener('change', applyFilters);
+    document.getElementById('element-filter').addEventListener('change', applyFilters);
+
+    document.getElementById('level-box').addEventListener('click', e => {
+      const lv = e.target.dataset.lv;
+      if (!lv) return;
+      levelState.lv = lv;
+      renderCharacters();
+      applyFilters();
+    });
+
+    function getActiveValues(selector) {
+      return Array.from(document.querySelectorAll(selector + ' button.active')).map(b => b.dataset.value);
+    }
+
+    function applyFilters() {
+      const ps = getActiveValues('#paths');
+      const rs = getActiveValues('#rarity');
+      const faction = document.getElementById('faction-filter').value;
+      const element = document.getElementById('element-filter').value;
+
+      document.querySelectorAll('.character-card').forEach(card => {
+        let ok = true;
+        if (ps.length && !ps.includes(card.dataset.path)) ok = false;
+        if (rs.length && !rs.includes(card.dataset.rarity)) ok = false;
+        if (faction && card.dataset.faction !== faction) ok = false;
+        if (element && card.dataset.element !== element) ok = false;
+        card.style.display = ok ? 'flex' : 'none';
+      });
+    }
+
+    // 初始化
+    renderCharacters();
+    applyFilters();
+
+    // 視頻按鈕懸停效果
+    document.querySelectorAll('.video-button').forEach(button => {
+      const video = button.querySelector('video');
+      button.addEventListener('mouseenter', () => {
+        if (video && video.paused) {
+          video.currentTime = 0;
+          video.play();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
