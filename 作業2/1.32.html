@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>角色篩選</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: url('3.12.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    /* 左側側邊欄 */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding-top: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .sidebar .menu {
+      list-style: none;
+      padding: 0 20px;
+      margin: 0;
+    }
+
+    .sidebar .menu li {
+      padding: 12px 0;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
+    }
+
+    .sidebar .menu li:hover {
+      color: gold;
+    }
+
+    .page-container {
+      margin-left: 200px; /* 為側邊欄預留空間 */
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .filter-section {
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+    }
+
+    .filter-title {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .video-button {
+      width: 60px;
+      height: 60px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .video-button video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .video-button.active {
+      border-color: gold;
+    }
+
+    .rarity-boxes button {
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .rarity-boxes button.active {
+      border-color: gold;
+      color: gold;
+    }
+
+    .select-group {
+      padding: 4px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border-radius: 4px;
+      appearance: none;
+      margin-bottom: 10px;
+    }
+
+    .level-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .level-box button {
+      padding: 6px 12px;
+      border: 1px solid white;
+      background: transparent;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .level-box button.active {
+      border-color: gold;
+    }
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .character-card {
+      background: linear-gradient(135deg, rgba(40, 40, 40, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
+      border-radius: 8px;
+      border: 2px solid rgba(100, 100, 100, 0.3);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      position: relative;
+      min-height: 220px; /* 增加卡片高度 */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .character-card:hover {
+      transform: translateY(-4px);
+      border-color: gold;
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .char-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .char-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .char-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      margin: 0;
+    }
+
+    .char-title {
+      font-size: 12px;
+      color: #aaa;
+      margin: 0;
+    }
+
+    .rarity-stars {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0;
+    }
+
+    .stars {
+      color: #ffd700;
+      font-size: 14px;
+      text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+    }
+
+    .element-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .stats-section {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: auto; /* 推到底部 */
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #ddd;
+    }
+
+    .stat-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+      opacity: 0.7;
+    }
+
+    .stat-value {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .rarity-4 .char-img {
+      border-color: #a855f7;
+      box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+    }
+
+    .rarity-5 .char-img {
+      border-color: #f59e0b;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+    }
+    .icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  vertical-align: middle;
+  }
+  </style>
+</head>
+<body>
+
+  <!-- 左側目錄欄 -->
+  <div class="sidebar">
+    <ul class="menu">
+      <h1><b>目錄</b></h1>
+      <li><img src="世界.png" class="icon" alt="icon"><span> 星穹世界觀</span></li>
+      <li><img src="人物.png" class="icon" alt="icon"><span> 人物圖鑑</span></li>
+      <li><img src="光錐.png" class="icon" alt="icon"><span> 裝備圖鑑</span></li>
+      <li><img src="物品.png" class="icon" alt="icon"><span> 物品圖鑑</span></li>
+      <li><img src="阿哈.jpg" class="icon" alt="icon"><span> 敵人圖鑑</span></li>
+      <li><img src="阿哈.jpg" class="icon" alt="icon"><span> 戰鬥挑戰</span></li>
+      <li><img src="阿哈.jpg" class="icon" alt="icon"><span> 遊戲機制</span></li>
+      <li><img src="阿哈.jpg" class="icon" alt="icon"><span> 模擬宇宙</span></li>
+      <li><img src="阿哈.jpg" class="icon" alt="icon"><span> 美公益畫</span></li>
+    </ul>
+  </div>
+
+  <!-- 主內容 -->
+  <div class="page-container">
+    <div class="filter-section">
+      <div class="filter-title">戰鬥屬性</div>
+      <div class="filter-group" id="battle-attributes">
+        <button data-value="0" class="video-button">
+          <video src="量子.mov" muted preload="auto"></video>
+        </button>
+        <button data-value="1" class="video-button">
+          <video src="物理.mp4" muted preload="auto"></video>
+        </button>
+                <button data-value="2" class="video-button">
+          <video src="風.mp4" muted preload="auto"></video>
+        </button>
+                <button data-value="3" class="video-button">
+          <video src="火.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="4" class="video-button">
+          <video src="虛數.mov" muted preload="auto"></video>
+        </button>
+                      <button data-value="5" class="video-button">
+          <video src="雷.mov" muted preload="auto"></video>
+        </button>
+                      <button data-value="6" class="video-button">
+          <video src="冰.mov" muted preload="auto"></video>
+        </button>
+      </div>
+
+
+
+      <div class="filter-title">命途</div>
+      <div class="filter-group" id="paths">
+        <button data-value="0" class="video-button">
+          <video src="毀滅.mov" muted preload="auto"></video>
+        </button>
+        <button data-value="1" class="video-button">
+          <video src="巡獵.mov" muted preload="auto"></video>
+        </button>
+        <button data-value="2" class="video-button">
+          <video src="智識.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="3" class="video-button">
+          <video src="同協.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="4" class="video-button">
+          <video src="虛無.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="5" class="video-button">
+          <video src="存護.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="6" class="video-button">
+          <video src="豐饒.mov" muted preload="auto"></video>
+        </button>
+      </div>
+
+      <div class="filter-title">稀有度</div>
+      <div class="filter-group rarity-boxes" id="rarity">
+        <button data-value="4">★★★★</button>
+        <button data-value="5">★★★★★</button>
+      </div>
+
+      <div class="filter-title">陣營</div>
+      <select class="select-group" id="faction-filter">
+        <option value="">全部</option>
+        <option value="A">星際和平公司</option>
+        <option value="B">星穹列車</option>
+      </select>
+
+      <div class="filter-title">等級</div>
+      <div class="level-box" id="level-box">
+        <button class="active" data-lv="1">Lv1</button>
+        <button data-lv="80">Lv80</button>
+      </div>
+    </div>
+
+    <div class="character-grid" id="character-grid">
+      <!-- 動態角色卡片將在這裡生成 -->
+    </div>
+  </div>
+
+  <script>
+    const characters = [
+      {
+        name: "阿哈",
+        battle: "0",
+        path: "0",
+        rarity: "5",
+        faction: "A",
+        imgLv1: "aha_lv1.jpg",
+        imgLv80: "aha_lv80.jpg",
+        statLv1: ["HP:100", "ATK:50"],
+        statLv80: ["HP:300", "ATK:150"]
+      },
+      {
+        name: "丹恆",
+        battle: "4",
+        path: "4",
+        rarity: "5",
+        faction: "A",
+        imgLv1: "dan_lv1.jpg",
+        imgLv80: "dan_lv80.jpg",
+        statLv1: ["HP:90", "ATK:40"],
+        statLv80: ["HP:250", "ATK:130"]
+      },
+      {
+        name: "丹恆",
+        battle: "1",
+        path: "1",
+        rarity: "4",
+        faction: "B",
+        imgLv1: "dan_lv1.jpg",
+        imgLv80: "dan_lv80.jpg",
+        statLv1: ["HP:90", "ATK:40"],
+        statLv80: ["HP:250", "ATK:130"]
+      }
+    ];
+
+    const grid = document.getElementById('character-grid');
+    const levelState = { lv: '1' };
+
+    function renderCharacters() {
+      grid.innerHTML = '';
+      characters.forEach(c => {
+        const card = document.createElement('div');
+        card.className = `character-card rarity-${c.rarity}`;
+        card.dataset.battle = c.battle;
+        card.dataset.path = c.path;
+        card.dataset.rarity = c.rarity;
+        card.dataset.faction = c.faction;
+        card.dataset.imgLv1 = c.imgLv1;
+        card.dataset.imgLv80 = c.imgLv80;
+        card.dataset.statLv1 = c.statLv1.join(',');
+        card.dataset.statLv80 = c.statLv80.join(',');
+
+        // 卡片頭部
+        const cardHeader = document.createElement('div');
+        cardHeader.className = 'card-header';
+
+        // 角色頭像
+        const img = document.createElement('div');
+        img.className = 'char-img';
+        img.style.backgroundImage = `url(${c[`imgLv${levelState.lv}`]})`;
+
+        // 角色資訊區域
+        const info = document.createElement('div');
+        info.className = 'char-info';
+        
+        // 角色名字
+        const name = document.createElement('div');
+        name.className = 'char-name';
+        name.textContent = c.name;
+        
+        // 角色職業/稱號（可選）
+        const title = document.createElement('div');
+        title.className = 'char-title';
+        title.textContent = '記憶';
+        
+        // 稀有度和屬性
+        const raritySection = document.createElement('div');
+        raritySection.className = 'rarity-stars';
+        
+        const stars = document.createElement('span');
+        stars.className = 'stars';
+        stars.textContent = '★'.repeat(parseInt(c.rarity));
+        
+        const elementIcon = document.createElement('div');
+        elementIcon.className = 'element-icon';
+        elementIcon.textContent = getElementIcon(c.battle);
+        elementIcon.style.background = getElementColor(c.battle);
+        
+        raritySection.appendChild(stars);
+        raritySection.appendChild(elementIcon);
+        
+        info.appendChild(name);
+        info.appendChild(title);
+        info.appendChild(raritySection);
+        
+        cardHeader.appendChild(img);
+        cardHeader.appendChild(info);
+        
+        // 數據區域 - 移到星級下方（在底部）
+        const statsSection = document.createElement('div');
+        statsSection.className = 'stats-section';
+        
+        c[`statLv${levelState.lv}`].forEach(statLine => {
+          const [statType, value] = statLine.split(':');
+          const statItem = document.createElement('div');
+          statItem.className = 'stat-item';
+          
+          const statInfo = document.createElement('span');
+          const icon = document.createElement('span');
+          icon.className = 'stat-icon';
+          icon.textContent = getStatIcon(statType);
+          statInfo.appendChild(icon);
+          statInfo.appendChild(document.createTextNode(statType));
+          
+          const statValue = document.createElement('span');
+          statValue.className = 'stat-value';
+          statValue.textContent = value;
+          
+          statItem.appendChild(statInfo);
+          statItem.appendChild(statValue);
+          statsSection.appendChild(statItem);
+        });
+
+        card.appendChild(cardHeader);
+        card.appendChild(statsSection);
+        grid.appendChild(card);
+      });
+    }
+
+    // 取得屬性圖標
+    function getElementIcon(battleType) {
+      const icons = {
+        '0': '量', '1': '物', '2': '風', '3': '火',
+        '4': '虛', '5': '雷', '6': '冰'
+      };
+      return icons[battleType] || '?';
+    }
+
+    // 取得屬性顏色
+    function getElementColor(battleType) {
+      const colors = {
+        '0': 'linear-gradient(45deg, #8b5cf6, #a855f7)', // 量子-紫色
+        '1': 'linear-gradient(45deg, #6b7280, #9ca3af)', // 物理-灰色
+        '2': 'linear-gradient(45deg, #10b981, #34d399)', // 風-綠色
+        '3': 'linear-gradient(45deg, #f59e0b, #fbbf24)', // 火-橙色
+        '4': 'linear-gradient(45deg, #3b82f6, #60a5fa)', // 虛數-藍色
+        '5': 'linear-gradient(45deg, #8b5cf6, #c084fc)', // 雷-紫色
+        '6': 'linear-gradient(45deg, #06b6d4, #22d3ee)'  // 冰-青色
+      };
+      return colors[battleType] || 'linear-gradient(45deg, #6b7280, #9ca3af)';
+    }
+
+    // 取得數據圖標
+    function getStatIcon(statType) {
+      const icons = {
+        'HP': '♥',
+        'ATK': '⚔',
+        'DEF': '🛡',
+        'SPD': '⚡'
+      };
+      return icons[statType] || '●';
+    }
+
+    function setupToggle(selector, single = false) {
+      document.querySelector(selector).addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        if (single) {
+          document.querySelectorAll(selector + ' button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        } else {
+          btn.classList.toggle('active');
+        }
+        applyFilters();
+      });
+    }
+
+    setupToggle('#battle-attributes');
+    setupToggle('#paths');
+    setupToggle('#rarity');
+    setupToggle('#level-box', true);
+
+    document.getElementById('faction-filter').addEventListener('change', applyFilters);
+
+    document.getElementById('level-box').addEventListener('click', e => {
+      const lv = e.target.dataset.lv;
+      if (!lv) return;
+      levelState.lv = lv;
+      renderCharacters();
+      applyFilters();
+    });
+
+    function getActiveValues(selector) {
+      return Array.from(document.querySelectorAll(selector + ' button.active')).map(b => b.dataset.value);
+    }
+
+    function applyFilters() {
+      const bs = getActiveValues('#battle-attributes');
+      const ps = getActiveValues('#paths');
+      const rs = getActiveValues('#rarity');
+      const faction = document.getElementById('faction-filter').value;
+
+      document.querySelectorAll('.character-card').forEach(card => {
+        let ok = true;
+        if (bs.length && !bs.includes(card.dataset.battle)) ok = false;
+        if (ps.length && !ps.includes(card.dataset.path)) ok = false;
+        if (rs.length && !rs.includes(card.dataset.rarity)) ok = false;
+        if (faction && card.dataset.faction !== faction) ok = false;
+        card.style.display = ok ? 'flex' : 'none';
+      });
+    }
+
+    renderCharacters();
+    applyFilters();
+
+    document.querySelectorAll('.video-button').forEach(button => {
+      const video = button.querySelector('video');
+      button.addEventListener('mouseenter', () => {
+        if (video.paused) {
+          video.currentTime = 0;
+          video.play();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

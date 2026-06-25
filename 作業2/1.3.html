@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>角色篩選</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: url('3.12.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    /* 左側側邊欄 */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding-top: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .sidebar .menu {
+      list-style: none;
+      padding: 0 20px;
+      margin: 0;
+    }
+
+    .sidebar .menu li {
+      padding: 12px 0;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar .menu li:hover {
+      color: gold;
+    }
+
+    .page-container {
+      margin-left: 200px; /* 為側邊欄預留空間 */
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .filter-section {
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+    }
+
+    .filter-title {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .video-button {
+      width: 60px;
+      height: 60px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .video-button video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .video-button.active {
+      border-color: gold;
+    }
+
+    .rarity-boxes button {
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .rarity-boxes button.active {
+      border-color: gold;
+      color: gold;
+    }
+
+    .select-group {
+      padding: 4px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border-radius: 4px;
+      appearance: none;
+      margin-bottom: 10px;
+    }
+
+    .level-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .level-box button {
+      padding: 6px 12px;
+      border: 1px solid white;
+      background: transparent;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .level-box button.active {
+      border-color: gold;
+    }
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .character-card {
+      background: linear-gradient(135deg, rgba(40, 40, 40, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
+      border-radius: 12px;
+      border: 2px solid rgba(100, 100, 100, 0.3);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      position: relative;
+      min-height: 280px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer; /* 添加手型光標 */
+    }
+
+    .character-card:hover {
+      transform: translateY(-4px);
+      border-color: gold;
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    }
+
+    /* 添加點擊效果 */
+    .character-card:active {
+      transform: translateY(-2px);
+      transition: transform 0.1s ease;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      padding: 16px;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .char-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .char-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0; /* 防止文字溢出 */
+    }
+
+    .char-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      margin: 0;
+      word-break: break-word; /* 長文字自動換行 */
+    }
+
+    .char-title {
+      font-size: 14px;
+      color: #aaa;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap; /* 允許換行 */
+    }
+
+    .char-title-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+      border-radius: 3px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      flex-shrink: 0;
+    }
+
+    .rarity-stars {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0;
+    }
+
+    .stars {
+      color: #ffd700;
+      font-size: 16px;
+      text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+      font-weight: bold;
+    }
+
+    .element-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background-size: cover;
+      background-position: center;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .element-icon:hover {
+      border-color: gold;
+      transform: scale(1.1);
+    }
+
+    .stats-section {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #ddd;
+      padding: 4px 0;
+    }
+
+    .stat-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      opacity: 0.7;
+    }
+
+    .stat-value {
+      font-weight: bold;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    .rarity-4 .char-img {
+      border-color: #a855f7;
+      box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+    }
+
+    .rarity-5 .char-img {
+      border-color: #f59e0b;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+    }
+    .icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    /* 添加點擊提示 */
+    .character-card::after {
+      content: "點擊查看詳情";
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .character-card:hover::after {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 左側目錄欄 -->
+  <div class="sidebar">
+    <ul class="menu">
+      <h1><b>目錄</b></h1>
+      <a href="2.html" style="color: white; text-decoration: none;"><li><img src="世界.png" class="icon" alt="icon"><span> 主畫面</span></li></a>
+      <a href="3.html" style="color: white; text-decoration: none;"><li><img src="人物.png" class="icon" alt="icon"><span> 人物圖鑑</span></li></a>
+      <a href="4.html" style="color: white; text-decoration: none;"><li><img src="光錐.png" class="icon" alt="icon"><span> 裝備圖鑑</span></li></a>
+      <a href="2.3.html" style="color: white; text-decoration: none;"><li><img src="物品.png" class="icon" alt="icon"><span>製作素材</span></li></a>
+      <a href="2.4.html" style="color: white; text-decoration: none;"><li><img src="敵人.png" class="icon" alt="icon"><span>製作工具</span></li></a>
+    </ul>
+  </div>
+
+  <!-- 主內容 -->
+  <div class="page-container">
+    <div class="filter-section">
+      <div class="filter-title">戰鬥屬性</div>
+      <div class="filter-group" id="battle-attributes">
+        <button data-value="0" class="video-button">
+          <video src="量子.mov" muted preload="auto"></video>
+        </button>
+        <button data-value="1" class="video-button">
+          <video src="物理.mp4" muted preload="auto"></video>
+        </button>
+                <button data-value="2" class="video-button">
+          <video src="風.mp4" muted preload="auto"></video>
+        </button>
+                <button data-value="3" class="video-button">
+          <video src="火.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="4" class="video-button">
+          <video src="虛數.mov" muted preload="auto"></video>
+        </button>
+                      <button data-value="5" class="video-button">
+          <video src="雷.mov" muted preload="auto"></video>
+        </button>
+                      <button data-value="6" class="video-button">
+          <video src="冰.mov" muted preload="auto"></video>
+        </button>
+      </div>
+
+      <div class="filter-title">命途</div>
+      <div class="filter-group" id="paths">
+        <button data-value="0" class="video-button">
+          <video src="毀滅.mov" muted preload="auto"></video>
+        </button>
+        <button data-value="1" class="video-button">
+          <video src="巡獵.mov" muted preload="auto"></video>
+        </button>
+        <button data-value="2" class="video-button">
+          <video src="智識.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="3" class="video-button">
+          <video src="同協.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="4" class="video-button">
+          <video src="虛無.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="5" class="video-button">
+          <video src="存護.mov" muted preload="auto"></video>
+        </button>
+                <button data-value="6" class="video-button">
+          <video src="豐饒.mov" muted preload="auto"></video>
+        </button>
+      </div>
+
+      <div class="filter-title">稀有度</div>
+      <div class="filter-group rarity-boxes" id="rarity">
+        <button data-value="4">★★★★</button>
+        <button data-value="5">★★★★★</button>
+      </div>
+
+      <div class="filter-title">陣營</div>
+      <select class="select-group" id="faction-filter">
+        <option value="">全部</option>
+        <option value="A">星際和平公司</option>
+        <option value="B">星穹列車</option>
+      </select>
+
+      <div class="filter-title">等級</div>
+      <div class="level-box" id="level-box">
+        <button class="active" data-lv="1">Lv1</button>
+        <button data-lv="80">Lv80</button>
+      </div>
+    </div>
+
+    <div class="character-grid" id="character-grid">
+      <!-- 動態角色卡片將在這裡生成 -->
+    </div>
+  </div>
+
+  <script>
+    const characters = [
+      {
+        name: "阿哈",
+        title: "歡愉星神",
+        battle: "",
+        path: "",
+        rarity: "5",
+        faction: "A",
+        imgLv1: "阿哈跑.jpg",
+        imgLv80: "阿哈跑.jpg",
+        statLv1: ["HP:????" , "DEF:????" , "ATK:????" , "SPD:????"],
+        statLv80: ["HP:????" , "DEF:????" , "ATK:????" , "SPD:????"],
+        detailPage: "character_aha.html" // 添加詳細頁面連結
+      },
+      {
+        name: "斯科特",
+        title: "虛無",
+        battle: "4",
+        path: "4",
+        rarity: "5",
+        faction: "A",
+        imgLv1: "dan_lv1.jpg",
+        imgLv80: "dan_lv80.jpg",
+        statLv1: ["HP:138" , "DEF:55" , "ATK:80" , "SPD:104"],
+        statLv80: ["HP:5800" , "DEF:2320" , "ATK:3330" , "SPD:110"],
+        detailPage: "character_scott.html" // 添加詳細頁面連結
+      }
+    ];
+
+    const grid = document.getElementById('character-grid');
+    const levelState = { lv: '1' };
+
+    function renderCharacters() {
+      grid.innerHTML = '';
+      characters.forEach(c => {
+        const card = document.createElement('div');
+        card.className = `character-card rarity-${c.rarity}`;
+        card.dataset.battle = c.battle;
+        card.dataset.path = c.path;
+        card.dataset.rarity = c.rarity;
+        card.dataset.faction = c.faction;
+        card.dataset.imgLv1 = c.imgLv1;
+        card.dataset.imgLv80 = c.imgLv80;
+        card.dataset.statLv1 = c.statLv1.join(',');
+        card.dataset.statLv80 = c.statLv80.join(',');
+        card.dataset.detailPage = c.detailPage; // 儲存詳細頁面連結
+
+        // 添加點擊事件監聽器
+        card.addEventListener('click', function() {
+          // 檢查是否有詳細頁面連結
+          if (c.detailPage) {
+            window.location.href = c.detailPage;
+          } else {
+            // 如果沒有設定詳細頁面，可以顯示提示或跳轉到預設頁面
+            alert(`${c.name} 的詳細頁面尚未建立`);
+            // 或者跳轉到通用的角色詳細頁面，並傳遞角色名稱參數
+            // window.location.href = `character_detail.html?name=${encodeURIComponent(c.name)}`;
+          }
+        });
+
+        // 卡片頭部
+        const cardHeader = document.createElement('div');
+        cardHeader.className = 'card-header';
+
+        // 角色頭像
+        const img = document.createElement('div');
+        img.className = 'char-img';
+        img.style.backgroundImage = `url(${c[`imgLv${levelState.lv}`]})`;
+
+        // 角色資訊區域
+        const info = document.createElement('div');
+        info.className = 'char-info';
+        
+        // 角色名字（移除圖標）
+        const name = document.createElement('div');
+        name.className = 'char-name';
+        name.textContent = c.name;
+        
+        // 角色職業/稱號（添加圖標）
+        const title = document.createElement('div');
+        title.className = 'char-title';
+        
+        const titleIcon = document.createElement('div');
+        titleIcon.className = 'char-title-icon';
+        titleIcon.style.backgroundImage = `url('${getPathImage(c.path)}')`;
+        
+        title.appendChild(titleIcon);
+        title.appendChild(document.createTextNode(c.title));
+        
+        // 稀有度和屬性
+        const raritySection = document.createElement('div');
+        raritySection.className = 'rarity-stars';
+        
+        const stars = document.createElement('span');
+        stars.className = 'stars';
+        stars.textContent = '★'.repeat(parseInt(c.rarity));
+        
+        // 將屬性改為圖片
+        const elementIcon = document.createElement('div');
+        elementIcon.className = 'element-icon';
+        elementIcon.style.backgroundImage = `url('${getElementImage(c.battle)}')`;
+        elementIcon.title = getElementName(c.battle);
+        
+        raritySection.appendChild(stars);
+        raritySection.appendChild(elementIcon);
+        
+        info.appendChild(name);
+        info.appendChild(title);
+        info.appendChild(raritySection);
+        
+        // 數據區域
+        const statsSection = document.createElement('div');
+        statsSection.className = 'stats-section';
+        
+        c[`statLv${levelState.lv}`].forEach(statLine => {
+          const [statType, value] = statLine.split(':');
+          const statItem = document.createElement('div');
+          statItem.className = 'stat-item';
+          
+          const statInfo = document.createElement('span');
+          const icon = document.createElement('span');
+          icon.className = 'stat-icon';
+          icon.textContent = getStatIcon(statType);
+          statInfo.appendChild(icon);
+          statInfo.appendChild(document.createTextNode(statType));
+          
+          const statValue = document.createElement('span');
+          statValue.className = 'stat-value';
+          statValue.textContent = value;
+          
+          statItem.appendChild(statInfo);
+          statItem.appendChild(statValue);
+          statsSection.appendChild(statItem);
+        });
+
+        info.appendChild(statsSection);
+        cardHeader.appendChild(img);
+        cardHeader.appendChild(info);
+        card.appendChild(cardHeader);
+        grid.appendChild(card);
+      });
+    }
+
+    // 取得屬性圖片路徑
+    function getElementImage(battleType) {
+      const images = {
+        '0': '量子屬性.png',
+        '1': '物理屬性.png',
+        '2': '風屬性.png',
+        '3': '火屬性.png',
+        '4': '虛數.png',
+        '5': '雷屬性.png',
+        '6': '冰屬性.png'
+      };
+      return images[battleType] || 'default屬性.png';
+    }
+
+    // 取得命途圖片路徑
+    function getPathImage(pathType) {
+      const images = {
+        '0': '毀滅命途.png',
+        '1': '巡獵命途.png',
+        '2': '智識命途.png',
+        '3': '同協命途.png',
+        '4': '虛無.png',
+        '5': '存護命途.png',
+        '6': '豐饒命途.png'
+      };
+      return images[pathType] || 'default命途.png';
+    }
+
+    // 原 getPathColor 函數已改為 getPathImage，此函數已棄用
+    function getPathColor(pathType) {
+      // 此函數已被 getPathImage 取代，保留以避免錯誤
+      const images = {
+        '0': '毀滅命途.png',
+        '1': '巡獵命途.png',
+        '2': '智識命途.png',
+        '3': '同協命途.png',
+        '4': '虛無.png',
+        '5': '存護命途.png',
+        '6': '豐饒命途.png'
+      };
+      return `url('${images[pathType] || 'default命途.png'}')`;
+    }
+
+    // 取得屬性名稱
+    function getElementName(battleType) {
+      const names = {
+        '0': '量子', '1': '物理', '2': '風', '3': '火',
+        '4': '虛數', '5': '雷', '6': '冰'
+      };
+      return names[battleType] || '未知';
+    }
+
+    // 取得命途名稱
+    function getPathName(pathType) {
+      const names = {
+        '0': '毀滅', '1': '巡獵', '2': '智識', '3': '同協',
+        '4': '虛無', '5': '存護', '6': '豐饒'
+      };
+      return names[pathType] || '未知';
+    }
+
+    // 取得數據圖標
+    function getStatIcon(statType) {
+      const icons = {
+        'HP': '♥',
+        'ATK': '⚔',
+        'DEF': '🛡',
+        'SPD': '⚡'
+      };
+      return icons[statType] || '●';
+    }
+
+    function setupToggle(selector, single = false) {
+      document.querySelector(selector).addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        if (single) {
+          document.querySelectorAll(selector + ' button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        } else {
+          btn.classList.toggle('active');
+        }
+        applyFilters();
+      });
+    }
+
+    setupToggle('#battle-attributes');
+    setupToggle('#paths');
+    setupToggle('#rarity');
+    setupToggle('#level-box', true);
+
+    document.getElementById('faction-filter').addEventListener('change', applyFilters);
+
+    document.getElementById('level-box').addEventListener('click', e => {
+      const lv = e.target.dataset.lv;
+      if (!lv) return;
+      levelState.lv = lv;
+      renderCharacters();
+      applyFilters();
+    });
+
+    function getActiveValues(selector) {
+      return Array.from(document.querySelectorAll(selector + ' button.active')).map(b => b.dataset.value);
+    }
+
+    function applyFilters() {
+      const bs = getActiveValues('#battle-attributes');
+      const ps = getActiveValues('#paths');
+      const rs = getActiveValues('#rarity');
+      const faction = document.getElementById('faction-filter').value;
+
+      document.querySelectorAll('.character-card').forEach(card => {
+        let ok = true;
+        if (bs.length && !bs.includes(card.dataset.battle)) ok = false;
+        if (ps.length && !ps.includes(card.dataset.path)) ok = false;
+        if (rs.length && !rs.includes(card.dataset.rarity)) ok = false;
+        if (faction && card.dataset.faction !== faction) ok = false;
+        card.style.display = ok ? 'flex' : 'none';
+      });
+    }
+
+    renderCharacters();
+    applyFilters();
+
+    document.querySelectorAll('.video-button').forEach(button => {
+      const video = button.querySelector('video');
+      button.addEventListener('mouseenter', () => {
+        if (video.paused) {
+          video.currentTime = 0;
+          video.play();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

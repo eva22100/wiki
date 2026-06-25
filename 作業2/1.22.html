@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>角色篩選</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: url('3.12.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    .page-container {
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .filter-section {
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+    }
+
+    .filter-title {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .video-button {
+      width: 60px;
+      height: 60px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .video-button video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .video-button.active {
+      border-color: gold;
+    }
+
+    .rarity-boxes button {
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .rarity-boxes button.active {
+      border-color: gold;
+      color: gold;
+    }
+
+    .select-group {
+      padding: 4px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border-radius: 4px;
+      appearance: none;
+      margin-bottom: 10px;
+    }
+
+    .level-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .level-box button {
+      padding: 6px 12px;
+      border: 1px solid white;
+      background: transparent;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .level-box button.active {
+      border-color: gold;
+    }
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .character-card {
+      background: rgba(0,0,0,0.7);
+      padding: 12px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: row;
+      border: 1px solid #555;
+      transition: transform 0.2s;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .character-card:hover {
+      transform: translateY(-4px);
+      border-color: gold;
+    }
+
+    .char-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .char-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stats {
+      font-size: 14px;
+    }
+
+    .stat-line {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div class="filter-section">
+      <div class="filter-title">戰鬥屬性</div>
+      <div class="filter-group" id="battle-attributes">
+        <button data-value="0" class="video-button">
+          <video src="風.mp4" muted preload="auto"></video>
+        </button>
+        <button data-value="1" class="video-button">
+          <video src="element_ice.mp4" muted preload="auto"></video>
+        </button>
+        <!-- 更多影片按鈕 -->
+      </div>
+
+      <div class="filter-title">命途</div>
+      <div class="filter-group" id="paths">
+        <button data-value="0" class="video-button">
+          <video src="path_destruction.mp4" muted preload="auto"></video>
+        </button>
+        <button data-value="1" class="video-button">
+          <video src="path_hunt.mp4" muted preload="auto"></video>
+        </button>
+      </div>
+
+      <div class="filter-title">稀有度</div>
+      <div class="filter-group rarity-boxes" id="rarity">
+        <button data-value="4">★★★★</button>
+        <button data-value="5">★★★★★</button>
+      </div>
+
+      <div class="filter-title">陣營</div>
+      <select class="select-group" id="faction-filter">
+        <option value="">全部</option>
+        <option value="A">星際和平公司</option>
+        <option value="B">星穹列車</option>
+      </select>
+
+      <div class="filter-title">等級</div>
+      <div class="level-box" id="level-box">
+        <button class="active" data-lv="1">Lv1</button>
+        <button data-lv="80">Lv80</button>
+      </div>
+    </div>
+
+    <div class="character-grid" id="character-grid">
+      <!-- 動態角色卡片將在這裡生成 -->
+    </div>
+  </div>
+
+  <script>
+    const characters = [
+      {
+        name: "阿哈",
+        battle: "0",
+        path: "0",
+        rarity: "5",
+        faction: "A",
+        imgLv1: "aha_lv1.jpg",
+        imgLv80: "aha_lv80.jpg",
+        statLv1: ["HP:100", "ATK:50"],
+        statLv80: ["HP:300", "ATK:150"]
+      },
+      {
+        name: "丹恆",
+        battle: "1",
+        path: "1",
+        rarity: "4",
+        faction: "B",
+        imgLv1: "dan_lv1.jpg",
+        imgLv80: "dan_lv80.jpg",
+        statLv1: ["HP:90", "ATK:40"],
+        statLv80: ["HP:250", "ATK:130"]
+      }
+      // 更多角色
+    ];
+
+    const grid = document.getElementById('character-grid');
+    const levelState = { lv: '1' };
+
+    function renderCharacters() {
+      grid.innerHTML = '';
+      characters.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'character-card';
+        card.dataset.battle = c.battle;
+        card.dataset.path = c.path;
+        card.dataset.rarity = c.rarity;
+        card.dataset.faction = c.faction;
+        card.dataset.imgLv1 = c.imgLv1;
+        card.dataset.imgLv80 = c.imgLv80;
+        card.dataset.statLv1 = c.statLv1.join(',');
+        card.dataset.statLv80 = c.statLv80.join(',');
+
+        const img = document.createElement('div');
+        img.className = 'char-img';
+        img.style.backgroundImage = `url(${c[`imgLv${levelState.lv}`]})`;
+
+        const info = document.createElement('div');
+        info.className = 'char-info';
+        const stats = document.createElement('div');
+        stats.className = 'stats';
+        c[`statLv${levelState.lv}`].forEach(line => {
+          const statLine = document.createElement('div');
+          statLine.className = 'stat-line';
+          statLine.textContent = line;
+          stats.appendChild(statLine);
+        });
+
+        info.appendChild(stats);
+        card.appendChild(img);
+        card.appendChild(info);
+        grid.appendChild(card);
+      });
+    }
+
+    function setupToggle(selector, single = false) {
+      document.querySelector(selector).addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        if (single) {
+          document.querySelectorAll(selector + ' button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        } else {
+          btn.classList.toggle('active');
+        }
+        applyFilters();
+      });
+    }
+
+    setupToggle('#battle-attributes');
+    setupToggle('#paths');
+    setupToggle('#rarity');
+    setupToggle('#level-box', true);
+
+    document.getElementById('faction-filter').addEventListener('change', applyFilters);
+
+    document.getElementById('level-box').addEventListener('click', e => {
+      const lv = e.target.dataset.lv;
+      if (!lv) return;
+      levelState.lv = lv;
+      renderCharacters();
+      applyFilters();
+    });
+
+    function getActiveValues(selector) {
+      return Array.from(document.querySelectorAll(selector + ' button.active')).map(b => b.dataset.value);
+    }
+
+    function applyFilters() {
+      const bs = getActiveValues('#battle-attributes');
+      const ps = getActiveValues('#paths');
+      const rs = getActiveValues('#rarity');
+      const faction = document.getElementById('faction-filter').value;
+
+      document.querySelectorAll('.character-card').forEach(card => {
+        let ok = true;
+        if (bs.length && !bs.includes(card.dataset.battle)) ok = false;
+        if (ps.length && !ps.includes(card.dataset.path)) ok = false;
+        if (rs.length && !rs.includes(card.dataset.rarity)) ok = false;
+        if (faction && card.dataset.faction !== faction) ok = false;
+        card.style.display = ok ? 'flex' : 'none';
+      });
+    }
+
+    renderCharacters();
+    applyFilters();
+
+    // 撥放影片 hover 觸發
+    document.querySelectorAll('.video-button').forEach(button => {
+      const video = button.querySelector('video');
+      button.addEventListener('mouseenter', () => {
+        if (video.paused) {
+          video.currentTime = 0;
+          video.play();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

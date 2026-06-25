@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>貢獻者榜</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: url('3.12.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding-top: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .sidebar .menu {
+      list-style: none;
+      padding: 0 20px;
+      margin: 0;
+    }
+
+    .sidebar .menu li {
+      padding: 12px 0;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
+    }
+
+    .sidebar .menu li:hover {
+      color: gold;
+    }
+
+    .page-container {
+      margin-left: 200px;
+      padding: 20px;
+    }
+
+    .contributor-list {
+      max-height: 500px; /* 控制滾動區塊高度 */
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .contributor {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .contributor img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .contributor .info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contributor .name {
+      font-weight: bold;
+    }
+
+    .contributor .count {
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    /* 捲軸美化（可選） */
+    .contributor-list::-webkit-scrollbar {
+      width: 8px;
+    }
+    .contributor-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+    .icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 左側目錄欄 -->
+  <div class="sidebar">
+    <ul class="menu">
+      <h1><b>目錄</b></h1>
+      <a href="2.html" style="color: white; text-decoration: none;"><li><img src="世界.png" class="icon" >主畫面</li></a>
+      <a href="3.html" style="color: white; text-decoration: none;"><li><img src="人物.png" class="icon" >人物圖鑑</li></a>
+      <a href="4.html" style="color: white; text-decoration: none;"><li><img src="光錐.png" class="icon" >裝備圖鑑</li></a>
+      <a href="2.3.html" style="color: white; text-decoration: none;"><li><img src="物品.png" class="icon" >製作素材</li></a>
+      <a href="2.4.html" style="color: white; text-decoration: none;"><li><img src="敵人.png" class="icon">製作工具</li></a>
+    </ul>
+  </div>
+
+  <!-- 主內容 -->
+  <div class="page-container">
+    <h2 style="margin-bottom: 12px;">製作素材來源</h2>
+    <div class="contributor-list">
+      <a href="https://reurl.cc/AMQ188"target="_blank" class="contributor">
+        <img src="hoyo.jpg" alt="Hoyowiki">
+        <div class="info">
+          <div class="name">官方資料庫 Hoyowiki</div>
+          <div class="count">網站</div>
+        </div>
+      </a>
+
+      <a href="https://reurl.cc/j90ReZ" target="_blank" class="contributor">
+        <img src="bilibili.png" alt="走近星穹">
+        <div class="info">
+          <div class="name">bilibili 二創 斯科特 走近星穹</div>
+          <div class="count">影片 作者:陀思妥拖延症斯基</div>
+        </div>
+      </a>
+
+      <a href="https://example.com/user3" target="_blank" class="contributor">
+        <img src="bilibili.png" alt="角色pv">
+        <div class="info">
+          <div class="name">bilibili 二創 斯科特 角色pv</div>
+          <div class="count">影片 作者:金咸鱼</div>
+        </div>
+      </a>
+
+      <a href="https://reurl.cc/dQErng" target="_blank" class="contributor">
+        <img src="bilibili.png" alt="星神配音">
+        <div class="info">
+          <div class="name">bilibili 二創 阿哈 星神配音</div>
+          <div class="count">影片 作者:努力摆烂的白寒酥</div>
+        </div>
+      </a>
+
+      <a href="https://example.com/user6" target="_blank" class="contributor">
+        <img src="bilibili.png" alt="命途動態">
+        <div class="info">
+          <div class="name">bilibili 二創 斯科特 《不许踏上旅途》</div>
+          <div class="count">影片(主介面背景音樂) 作者:金咸鱼</div>
+        </div>
+      </a>
+
+      <a href="https://reurl.cc/4LAgbY" target="_blank" class="contributor">
+        <img src="yt.png" alt="戰鬥屬性動態">
+        <div class="info">
+          <div class="name">youtube 二創 戰鬥屬性動態</div>
+          <div class="count">影片 作者:SSS[사메스]</div>
+        </div>
+      </a>
+
+      <a href="https://example.com/user6" target="_blank" class="contributor">
+        <img src="yt.png" alt="命途動態">
+        <div class="info">
+          <div class="name">youtube 二創 命途動態</div>
+          <div class="count">影片 作者:SSS[사메스]</div>
+        </div>
+      </a>
+      <a href="https://reurl.cc/lzqVyq" target="_blank" class="contributor">
+        <img src="bilibili.png" alt="命途動態">
+        <div class="info">
+          <div class="name">bilibili 斯科特 遊戲劇情</div>
+          <div class="count">影片 作者:想抱莉莉娅的云天</div>
+        </div>
+      </a>
+      <a href="https://reurl.cc/1KdxO8" target="_blank" class="contributor">
+        <img src="bilibili.png" alt="命途動態">
+        <div class="info">
+          <div class="name">bilibili 斯科特 遊戲劇情</div>
+          <div class="count">影片 作者:在雨中果奔</div>
+        </div>
+      </a>
+      <a href="https://reurl.cc/2K203X" target="_blank" class="contributor">
+        <img src="bilibili.png" alt="命途動態">
+        <div class="info">
+          <div class="name">bilibili 斯科特 遊戲劇情</div>
+          <div class="count">影片 作者:泛音1572</div>
+        </div>
+      </a>
+      <a href="https://reurl.cc/eMexKb" target="_blank" class="contributor">
+        <img src="m.jpg" alt="命途動態">
+        <div class="info">
+          <div class="name">萌娘百科 斯科特</div>
+          <div class="count">網站</div>
+        </div>
+      </a>
+      <!-- 繼續添加更多貢獻者 -->
+    </div>
+  </div>
+
+</body>
+</html>
